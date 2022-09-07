@@ -17,6 +17,7 @@
 // B) Highlight the searched item in presented list.
 
 using Checkpoin2_Produc_list_L4_Ole;
+using System.Xml.Linq;
 
 bool exit = false;
 int cursorLeft = 0;
@@ -24,6 +25,7 @@ int cursorTop = 0;
 
 List<Product> products = new List<Product>();       // List of products
 List<Category> categories = new List<Category>();   // List of categories
+List<Product> found = new List<Product>();          // Products found in search
 
 // Clear screen and print header
 Console.Clear();
@@ -56,6 +58,7 @@ void printMenu()
 {
     // Print menu
     Console.CursorTop = 0;
+    Console.CursorLeft = 0;
     Console.WriteLine("Products program");
     Console.WriteLine("Menu");
     Console.WriteLine("(1) Enter products");
@@ -67,7 +70,19 @@ void printMenu()
 
 void searchProduct()
 {
+    string search = "";
+    Console.Clear();
+    printProducts();
 
+    Console.CursorTop = 0;
+    while ((search = promptInput("Search for product name: ")) == "")
+    {
+        error("No input. Please try again");
+        continue;  // Retry on empty input
+    }
+    
+    found = products.FindAll(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+    printProducts();
 }
 
 bool newProduct() 
@@ -81,6 +96,7 @@ bool newProduct()
     Console.CursorTop = 0;
     Console.WriteLine("\nEnter a new product ('q' to quit)");
 
+    // Input Name --------------------------------------------------
     while ((name = promptInput("Name: ")) == "")
     {
         error("No input. Please try again");
@@ -88,6 +104,7 @@ bool newProduct()
     }
     if (name == "q") return true;         // Exit on input 'q'
 
+    // Input Price -------------------------------------------------
     while (price < 0)
     {
         try         // Check for integer input
@@ -108,7 +125,7 @@ bool newProduct()
         }
     }
 
-    // Special treatment for category as it is a class
+    // Special treatment for category as it is a class --------------
     string categoryName = "";
     while ((categoryName = promptInput("Category: ")) == "")
     {
@@ -124,16 +141,16 @@ bool newProduct()
         categories.Add(category);
     }
 
-    // Add the new product to the list and sort it
+    // Add the new product to the list and sort it --------------------
     products.Add(new Product(category, name, price));
     products = products.OrderBy(x => x.Price).ToList();
 
-    return false;
+    return false;  // Do not exit - continue with next product input
 }
 
 void highLight(string message)
 {
-    // Print table heading and sum in highligh colours
+    // Print in highligh colours - for use with table heading and sum
     Console.BackgroundColor = ConsoleColor.White;
     Console.ForegroundColor = ConsoleColor.Black;
     Console.WriteLine(message);
@@ -142,13 +159,14 @@ void highLight(string message)
 
 void error(string message)
 {
+    // Print error message on faulty input
     Console.SetCursorPosition(0, 0);                // Top of screen
     Console.BackgroundColor = ConsoleColor.Red;     // Warning colors
     Console.ForegroundColor = ConsoleColor.White;
     Console.WriteLine(message);                     // Warning message
     Console.ResetColor();
     restoreCursor();                                // Restor cursor to position prior to error
-    while (!Console.KeyAvailable) ;                 // Wait for key pressed to erase warning message from screen
+    while (!Console.KeyAvailable) ;                 // Wait for key pressed - to erase warning message from screen
     Console.SetCursorPosition(0, 0);                // Erase warning message
     Console.WriteLine("                              ");
     restoreCursor();                                // Restor cursor (again)
@@ -179,10 +197,20 @@ void printProducts()
 {
     // Print header and all products on a clear screen, ending with a sum
     Console.Clear();
-    Console.CursorTop = 8;
+    Console.CursorTop = 8;                                                      // Move to below input fields
     Console.WriteLine("Products");
     highLight("Name".PadRight(10) + "Price".PadLeft(10) + "     Category");     // Highlight table header
-    foreach (Product p in products) p.print();                                  // Print all products
+    foreach (Product p in products)
+    {
+        // Print all products
+        if (found.Contains(p))                      // Mark found products
+        {
+            Console.BackgroundColor = ConsoleColor.Yellow;
+            Console.ForegroundColor = ConsoleColor.Black;
+        }
+        p.print();                                  // Print product
+        Console.ResetColor();
+    }
     highLight("Sum: $" + products.Sum(x => x.Price));                           // Highlight sum
 }
 
