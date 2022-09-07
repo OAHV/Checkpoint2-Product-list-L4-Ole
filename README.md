@@ -1,5 +1,5 @@
-# Checkpoint2-Product list-L4-Ole
-
+# Checkpoint2-Product-list-L4-Ole
+This is a small weekly project for a C# .NET course.
 <h1>Checkpoint 2</h1>
 <em>Production list console app</em>
 <h1>Task</h1>
@@ -23,3 +23,8 @@ Refactor your code using "Linq" if possible.</p>
 <li>Add a Search function making it possible to search for products in presented list</li>
 <li>Highlight the searched item in presented list.</li>
 </ol>
+<h1>Contributing</h1>
+Programmer: Ole Victor<br>
+Teacher: Ömer Sözcü
+<h1>Contact</h1>
+Ole: ole@victor.se
