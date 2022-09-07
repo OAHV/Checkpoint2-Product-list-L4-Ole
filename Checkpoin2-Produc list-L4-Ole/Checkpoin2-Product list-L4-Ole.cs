@@ -16,6 +16,8 @@
 // A) Add a Search function making it possible to search for products in presented list
 // B) Highlight the searched item in presented list.
 
+using Checkpoin2_Produc_list_L4_Ole;
+
 bool exit = false;
 int cursorLeft = 0;
 int cursorTop = 0;
@@ -182,36 +184,5 @@ void printProducts()
     highLight("Name".PadRight(10) + "Price".PadLeft(10) + "     Category");     // Highlight table header
     foreach (Product p in products) p.print();                                  // Print all products
     highLight("Sum: $" + products.Sum(x => x.Price));                           // Highlight sum
-}
-
-class Product
-{
-    public Category partOf { get; set; }    // The product is part of a category
-    public string Name { get; set; }
-    public int Price { get; set; }
-
-    // Constructor
-    public Product(Category partOf, string name, int price)
-    {
-        this.partOf = partOf;
-        Name = name;
-        Price = price;
-    }
-
-    // Print method
-    public void print(int pad = 10)
-    {
-        Console.WriteLine(Name.PadRight(pad) + (" $" + Price.ToString()).PadLeft(pad) + "     " + partOf.Name);
-    }
-}
-
-class Category
-{
-    public Category(string name)
-    {
-        Name = name;
-    }
-
-    public string Name { get; set; }
 }
 
