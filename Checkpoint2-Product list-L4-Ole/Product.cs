@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Checkpoin2_Produc_list_L4_Ole
+namespace Checkpoint2_Product_list_L4_Ole
 {
     class Product
     {
