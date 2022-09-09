@@ -32,12 +32,11 @@ Console.Clear();
 Console.WriteLine("Products application");
 
 // Main loop
-while (!exit)   // until input 'q' or '4'
+while (!exit)
 {
     printMenu();                                    // Print the menu on screen
     saveCursor();                                   // Save cursor position in case of faulty input
-    char choise = Console.ReadKey().KeyChar;        // Read input (char)
-    switch (choise)
+    switch (Console.ReadKey().KeyChar)              // Read input (char)
     {
         case '1':                                   // Enter products
         case 'n':
@@ -58,14 +57,14 @@ while (!exit)   // until input 'q' or '4'
             exit = true;
             break;
         default:                                    // Invalid choise - error message
-            error("Invalid choise                 ");
+            error("Invalid choise");
             break;
     }
 }
 
 void printMenu()
 {
-    // Print menu
+    // Print menu on screen
     Console.CursorTop = 0;                          // Start at top of screen
     Console.CursorLeft = 0;
     Console.WriteLine("Products program");
@@ -77,28 +76,6 @@ void printMenu()
     Console.Write("Choise: ");
 }
 
-// Search products function
-void searchProduct()
-{
-    // Initialize, clear screen and print product list below
-    string search = "";
-    Console.Clear();
-    printProducts();
-    Console.CursorTop = 1;
-
-    // Ask for search-string
-    while ((search = promptInput("Search for product name: ")) == "")
-    {
-        error("No input. Please try again");        // No input - error message
-        continue;                                   // Retry on empty input
-    }
-    
-    // Find matches in product list and copy them to found list
-    found = products.FindAll(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
-    // Print the product list - now with found items in yellow
-    printProducts();
-}
-
 // Enter new products and put them in the list
 bool newProduct() 
 {
@@ -106,6 +83,7 @@ bool newProduct()
     string name = "";
 
     Console.Clear();
+    // Print products list below input menu
     printProducts();
 
     // Print header at top of screen
@@ -145,10 +123,10 @@ bool newProduct()
     string categoryName = "";
     while ((categoryName = promptInput("Category: ")) == "")
     {
-        error("No input                     ");
+        error("No input");
         continue;           // Retry on empty input
     }
-    // Try to find the input category in list
+    // Try to find the input category in categories list
     Category category = categories.Find(x => x.Name == categoryName);
     if (category == null)
     {
@@ -163,6 +141,51 @@ bool newProduct()
 
     return false;  // Do not exit - continue with next product input
 }
+
+void printProducts()
+{
+    // Print header and all products on a clear screen, ending with a sum
+    Console.Clear();
+    Console.CursorTop = 8;                                                      // Move to below input fields
+    Console.WriteLine("Products");
+    highLight("Name".PadRight(10) + "Price".PadLeft(10) + "     Category");     // Highlight table header
+    foreach (Product p in products)
+    {
+        // Print all products
+        if (found.Contains(p))                      // Mark products found in search
+        {
+            Console.BackgroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = ConsoleColor.Black;
+        }
+        p.print();                                  // Print product
+        Console.ResetColor();
+    }
+    // After products list - print sum of prices
+    highLight("Sum: $" + products.Sum(x => x.Price));                           // Highlight sum
+}
+
+// Search products function
+void searchProduct()
+{
+    // Initialize, clear screen and print product list below
+    string search = "";
+    Console.Clear();
+    printProducts();
+    Console.CursorTop = 1;
+
+    // Ask for search-string
+    while ((search = promptInput("Search for product name: ")) == "")
+    {
+        error("No input. Please try again");        // No input - error message
+        continue;                                   // Retry on empty input
+    }
+
+    // Find matches in product list and copy them to found list
+    found = products.FindAll(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+    // Print the product list - now with found items in green
+    printProducts();
+}
+
 
 void highLight(string message)
 {
@@ -193,7 +216,7 @@ string promptInput(string prompt = ":")
     // Prompt for input
     Console.CursorLeft = 0;         // Set cursor to the left to print prompt
     Console.Write(prompt);
-    saveCursor();                   // Save cursor position in case of error
+    saveCursor();                   // Save cursor position in case of faulty input
     return Console.ReadLine();      // Return input string
 }
 
@@ -209,24 +232,4 @@ void restoreCursor()
     Console.CursorLeft = cursorLeft;
 }
 
-void printProducts()
-{
-    // Print header and all products on a clear screen, ending with a sum
-    Console.Clear();
-    Console.CursorTop = 8;                                                      // Move to below input fields
-    Console.WriteLine("Products");
-    highLight("Name".PadRight(10) + "Price".PadLeft(10) + "     Category");     // Highlight table header
-    foreach (Product p in products)
-    {
-        // Print all products
-        if (found.Contains(p))                      // Mark products found in search
-        {
-            Console.BackgroundColor = ConsoleColor.Yellow;
-            Console.ForegroundColor = ConsoleColor.Black;
-        }
-        p.print();                                  // Print product
-        Console.ResetColor();
-    }
-    highLight("Sum: $" + products.Sum(x => x.Price));                           // Highlight sum
-}
 
